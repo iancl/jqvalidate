@@ -17,11 +17,12 @@ PENDING ADD VALIDATION TAKS FUNCTIONALITY
 Here is an example of how to use the plugin and it contains all the possible options
 --------------
 
+	//storing element in jQuery wrapper
+	var form = $('#form'); 
 
-var f = $('#form');
 
-
-	f.jqvalidate({
+	//executing plugin
+	form.jqvalidate({
 
 		//REQUIRED
 		//SUBMIT BUTTON SELECTOR
@@ -60,6 +61,17 @@ var f = $('#form');
 		//CHANGE FLAG TO FALSE IF YOU DONT WANT TO PRINT ERRORS
 		shouldPrintErrors: true,
 	});
+
+--------------
+
+--------------
+Please remember to allways destroy the plugin instance when is no longer needed by runnung this line
+	
+	//form is the name of the variable where the jQuery element was stored in.
+	form.data('jqvalidate').destroy();
+
+--------------
+
 
 
 *****
