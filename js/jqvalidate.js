@@ -17,13 +17,15 @@
 var
 /**********************************Private variables**************************************/
 //Plugin Class
-plugin,
+JQValidate,
+name,
 
 //CONSTANTS
 DATA_VALIDATION_TASKS = 'formvalidation',
 DATA_DEFAULT_VALUE = 'defaultvalue',
 EMPTY_STRING = '',
 INDIVIDUAL_MESSAGE_IDENTIFIER = 'individual',
+VERSION = '0.2',
 
 //DOM elements
 $submitBtn,
@@ -172,6 +174,17 @@ FormChild.prototype = {
 	},
 	clearErrorLabel: function(){
 		this.errorLabel.text('');
+	},
+	destroy: function(){
+		this.$el = null;
+		delete this.$el;
+
+		this.$parent = null;
+		delete this.$parent;
+
+		this.errorLabel.remove();
+		this.errorLabel = null;
+		delete this.errorLabel;
 	}
 };
 
@@ -186,6 +199,7 @@ var FormChildList = function(){
 
 	this.length = 0;
 	this.addElements(arguments);
+	this.splice = Array.prototype.splice;
 
 };
 
@@ -194,7 +208,7 @@ var FormChildList = function(){
  */
 FormChildList.prototype = {
 	constructor: FormChildList,
-	splice: Array.prototype.splice,
+	//splice: Array.prototype.splice,
 	/**
 	 *addElement Method
 	 *@param [FormElement] element that will be added to element array
@@ -310,30 +324,61 @@ FormChildList.prototype = {
 		this.forEachElement(function(){
 			this.clearErrorLabel();	
 		});
+	},
+	destroy: function(){
+		var i;
+
+		for(i=0; i<this.length; i++){
+			this[i].destroy();
+			this[i] = null;
+			delete this[i];
+		}
+
+		this.length = 0;
 	}
 };
 
+/******************************************JQVALIDATE CLASS*********************************************/
 
 /**
- * Plugin Class
+ * JQValidate Class
  * @param  {jQuery Object} $element will be the form object wrapped in a jquery object
  * @param  {object} options  Set of options provided by the user
  * @return {jQuery Object} the form element received as param so the user can use chaining
  */
-plugin = function($element, options){
-	
-	this.initialize = function(){
+JQValidate = function($element, options){
+
+	//adding properties
+	this.version = VERSION;
+	this.$element = $element;
+
+	//init plugin
+	this.initialize(options);
+
+};
+
+//adding creator :)
+JQValidate.prototype = { createdBy: 'ianCalderon' };
+
+//initalizer, destroyer and adding listeners
+$.extend(JQValidate.prototype, {
+	/**
+	 * initializes the plugin
+	 * @param  {object} options user defined options
+	 * @return {void}
+	 */
+	initialize: function(options){
 		log('************************LOG: Attempting to initialize plugin*****************************');
 
 		//validating options
-		options = $.extend({}, defaultOptions, options);
+		options = $.extend(defaultOptions, options);
 
 		//setting default values
 		boolIsFormValid = true;
-
+		name = 'jqvalidate';
 		//storing inputs and selects
-		$formInputElements = $.merge($element.find('input'), $element.find('select'));
-		$formInputElements = $.merge($formInputElements, $element.find('textarea'));
+		$formInputElements = $.merge(this.$element.find('input'), this.$element.find('select'));
+		$formInputElements = $.merge($formInputElements, this.$element.find('textarea'));
 		$submitBtn = $(options.submitBtnSelector);
 
 		//this reference will store all form elements
@@ -345,16 +390,17 @@ plugin = function($element, options){
 		//adding all event listeners
 		this.addListeners();
 
-		log('************************LOG: Initialized Plugin sucessfully************************');	
-	};
+		//register instance to jquery element
+		this.$element.data(name, this);
 
-
+		log('************************LOG: Initialized Plugin sucessfully************************');
+	},
 	/**
 	 * This method create a FormChild instance for every input, select and textarea
 	 * and adds it to the main FormChildList instance
 	 * @return {void}
 	 */
-	this.initAllFormChildElements = function(){
+	initAllFormChildElements: function(){
 		var i;
 
 		log('LOG: Attempting to initialize all form child elements...');
@@ -381,28 +427,92 @@ plugin = function($element, options){
 		$formInputElements = null;
 
 		log('LOG: Initialized all form child elements sucessfully');
-	};
-
+	},
 	/**
 	 * Adds all necesary event listentes
 	 * @return {void}
 	 */
-	this.addListeners = function(){
-		log('LOG: Attempting to add all Listeners...');
+	addListeners: function(){
+	 log('LOG: Attempting to add all Listeners...');
 
 		//on submit form listener
 		//binds plugin context to callback method
-		$element.on('submit',$.proxy(this.beginValidation, this));
+		this.$element.on('submit',$.proxy(this.beginValidation, this));
 
 		log('LOG: Addedd all Listeners sucessfully...');
-	};
+	},
+	/**
+	 * Removes all event listentes
+	 * @return {void}
+	 */
+	removeListeners: function(){
+		this.$element.off('submit',$.proxy(this.beginValidation, this));
+	},
+	/**
+	 * removing all DOM references and event handlers
+	 * @return {void}
+	 */
+	destroy: function(){
+		$submitBtn = null;
+		$formInputElements = null;
 
+		allFormElements.destroy();
+		allFormElements = null;
+
+		this.removeListeners();
+
+		this.$element = null;
+		delete this.$element;
+
+		log('LOG: JQValidation Instance destroyed...');
+	}
+});
+
+//error printing related
+$.extend(JQValidate.prototype, {
+	/**
+	 * prints global or individual errors
+	 * @return {void}
+	 */
+	printErrors: function(){
+
+		log('LOG: Attempting to print errors...');
+
+		if(defaultOptions.msgType === INDIVIDUAL_MESSAGE_IDENTIFIER){
+			this.printEachError();
+		} else {
+			this.printErrorsToPanel();
+		}
+
+		log('LOG: Errors printed successfuly...');
+	},
+	/**
+	 * Prints all individual errors
+	 * @return {void}
+	 */
+	printEachError: function(){
+		log('LOG: Attempting to print each  errors...');
+
+		var elementsWithErrors = allFormElements.allElementsWithErrors();
+
+		elementsWithErrors.forEachElement(function(){
+			this.generateAndPrintError();
+		});
+		
+
+		log('LOG: individual Errors printed successfuly...');
+	}
+});
+
+
+//validation related
+$.extend(JQValidate.prototype, {
 	/**
 	 * inits the validation process
 	 * @param  {event} evt event object
 	 * @return {void}
 	 */
-	this.beginValidation = function(evt, objParams){
+	beginValidation: function(evt, objParams){
 		var key;
 
 		evt.preventDefault();
@@ -421,25 +531,25 @@ plugin = function($element, options){
 
 		if(boolIsFormValid){
 			//executing success callback if available
-			if(options.onSuccess){
-				options.onSuccess.call(allFormElements.allElementsWithErrors(true));
+			if(defaultOptions.onSuccess){
+				defaultOptions.onSuccess();
 			}
 		} else {
 			//executing error callback if available
-			if(options.onError){
-				options.onError.call(allFormElements.allElementsWithErrors(true));
+			if(defaultOptions.onError){
+				defaultOptions.onError(allFormElements.allElementsWithErrors());
 			}
 		}
 		
 		log('************************LOG: BeginValidation Validation complete...************************');
-	};
+	},
 
 	/**
 	 * Validates Every form child instance
 	 * @param  {string} strKey current validationTask key name
 	 * @return {void}
 	 */
-	this.validateFormChild = function (strKey) {
+	validateFormChild: function (strKey) {
 		
 		var currentTask = validationTasks[strKey];
 
@@ -469,48 +579,8 @@ plugin = function($element, options){
 		currentTask = null;
 
 		log('LOG: Validation for '+strKey+' completed successfuly');
-	};
-
-	/**
-	 * prints global or individual errors
-	 * @return {void}
-	 */
-	this.printErrors = function(){
-
-		log('LOG: Attempting to print errors...');
-
-		if(defaultOptions.msgType === INDIVIDUAL_MESSAGE_IDENTIFIER){
-			this.printEachError();
-		} else {
-			this.printErrorsToPanel();
-		}
-
-		log('LOG: Errors printed successfuly...');
-	};
-
-	/**
-	 * Prints all individual errors
-	 * @return {void}
-	 */
-	this.printEachError = function(){
-		log('LOG: Attempting to print each  errors...');
-
-		var elementsWithErrors = allFormElements.allElementsWithErrors();
-
-		elementsWithErrors.forEachElement(function(){
-			this.generateAndPrintError();
-		});
-		
-
-		log('LOG: individual Errors printed successfuly...');
-	};
-
-	//init plugin
-	this.initialize();
-
-	//returning jQuery object to allow chaninig
-	return $element;
-};
+	}
+});
 
 
 /**
@@ -518,8 +588,8 @@ plugin = function($element, options){
  * @param  {object} options plugin options
  * @return {plugin object}
  */
-$.fn.formValidation = function(options){
-	return new plugin(this, options);
+$.fn.jqvalidate = function(options){
+	return new JQValidate(this, options);
 };
 
 }(this, document, jQuery));
@@ -546,15 +616,55 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
+var f = $('#form');
 
-$('#form').formValidation({
+var xxx;
+
+f.jqvalidate({
+
+	//REQUIRED
+	//SUBMIT BUTTON SELECTOR
 	submitBtnSelector: '#submit',
+
+	//OPTIONAL
+	//WILL BE EXECUTED WHEN THE FORM IS VALID
+	//you can add custom code here
 	onSuccess: function(){
 		console.log('onsuccessr', this);
 	},
-	onError: function(){
-		console.log('onError', this);
-	}
+	//OPTIONAL
+	//WILL BE EXECUTED WHEN THE FORM IS NOT VALID
+	//errorElements object will be an array with the form elements that failed validation
+	//you can add custom code here
+	onError: function(errorElements){
+		console.log('onError', errorElements);
+	},
+	//OPTIONAL
+	//defaultValue 'invalid'
+	//INVALID CLASS THAT WILL BE ADDED TO THE INVALID INPUTS, SELECTS, TEXTAREAS
+	invalidCls: 'invalid',
+
+	//OPTIONAL
+	//default value 'span'
+	//TAG THAT WILL BE USED FOR THE ERROR LABEL
+	errorLabelTag: 'span',
+
+	//OPTIONAL
+	//default value is 'errorLabel'
+	//CLASS FOR THE ERROR LABEL ELEMENTS
+	errorLabelCls: 'errorLabel',
+
+	//OPTIONAL
+	//default valie is true
+	//CHANGE FLAG TO FALSE IF YOU DONT WANT TO PRINT ERRORS
+	shouldPrintErrors: true,
 });
+
+
+//ALWAYS DESTROY PLUGIN
+/*
+f.data('jqvalidate').destroy();
+
+ */
 
 

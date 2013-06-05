@@ -5,11 +5,6 @@ JQVALIDATE JQUERY PLUGIN 0.2
 Created to validate forms
 --------------
 
-pending documentation
-
-
-PENDING GLOBAL MESSAGE
-
 
 PENDING ADD VALIDATION TAKS FUNCTIONALITY
 
@@ -23,7 +18,6 @@ Here is an example of how to use the plugin and it contains all the possible opt
 
 	//executing plugin
 	form.jqvalidate({
-
 		//REQUIRED
 		//SUBMIT BUTTON SELECTOR
 		submitBtnSelector: '#submit',
@@ -36,10 +30,10 @@ Here is an example of how to use the plugin and it contains all the possible opt
 		},
 		//OPTIONAL
 		//WILL BE EXECUTED WHEN THE FORM IS NOT VALID
-		//this object will be an array with the form elements that failed validation
+		//errorElements object will be an array with the form elements that failed validation
 		//you can add custom code here
-		onError: function(){
-			console.log('onError', this);
+		onError: function(errorElements){
+			console.log('onError', errorElements);
 		},
 		//OPTIONAL
 		//defaultValue 'invalid'
