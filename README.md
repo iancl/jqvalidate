@@ -66,7 +66,70 @@ Please remember to allways destroy the plugin instance when is no longer needed 
 
 --------------
 
+To change, or add validation tasks you can access the availableTaskList which is a regular object:
 
+
+--------------
+	
+	//this line
+	form.data('jqvalidate').availableTaskList;
+
+	//will return the available validations task list:
+	{
+		required: {
+			name: 'required',
+			fn: function(strVal, defaultVal){
+				return strVal !== defaultVal;
+			},
+			strError: 'this field is required'
+		},
+		number:{
+			name: 'number',
+			fn: function(strVal){
+				return (/^\d+$/).test(strVal);
+			},
+			strError: 'please enter a number only'
+		}
+	}
+
+	//to add new validation tasks you can do something like this
+	form.data('jqvalidate').availableTaskList[fooName] = {
+		name: 'fooName',
+		//currentVal and defaultVal cannot be changed
+		fn: function(currentVal, defaultVal){
+			//some code here
+		},
+		strError: 'foo error'
+	}
+
+	//if you print the available task list again:
+	form.data('jqvalidate').availableTaskList;
+
+	//it will look like this this time:
+	{
+		required: {
+			name: 'required',
+			fn: function(strVal, defaultVal){
+				return strVal !== defaultVal;
+			},
+			strError: 'this field is required'
+		},
+		number:{
+			name: 'number',
+			fn: function(strVal){
+				return (/^\d+$/).test(strVal);
+			},
+			strError: 'please enter a number only'
+		},
+		name: 'fooName',
+		//currentVal and defaultVal cannot be changed
+		fn: function(currentVal, defaultVal){
+			//some code here
+		},
+		strError: 'foo error'
+	}
+
+	//after this you can add the task name: 'fooName' to the data-formValidation="" attribute of the element you may want to validate
 
 *****
 

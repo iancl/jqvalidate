@@ -35,7 +35,7 @@ $formInputElements,
 allFormElements,
 
 //other vars
-boolShouldLog = true,
+boolShouldLog = false,
 boolIsFormValid,
 formElementId = 0,
 
@@ -367,6 +367,7 @@ $.extend(JQValidate.prototype, {
 	 * @param  {object} options user defined options
 	 * @return {void}
 	 */
+	availableTaskList: validationTasks,
 	initialize: function(options){
 		log('************************LOG: Attempting to initialize plugin*****************************');
 

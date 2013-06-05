@@ -24,6 +24,12 @@
 				<dl>
 					<dd><label>number:</label><input type="text" data-formvalidation="number required"/></dd>
 				</dl>
+				<dl>
+					<select data-formvalidation="required" data-defaultvalue="default">
+					<option val="0">default</option>
+					<option val="1">val1</option>
+				</select>
+				</dl>
 			</dt>
 
 			
@@ -37,10 +43,7 @@
 			<div class="clear"></div>
 
 			<label>comboBox:</label>
-			<select data-formvalidation="" data-defaultvalue="default">
-				<option val="0">default</option>
-				<option val="1">val1</option>
-			</select>
+			
 
 			<div class="clear"></div>
 			<label>textarea</label>
@@ -50,6 +53,7 @@
 			<button>submit</button>
 		</form>
 	</div>
+	<script src="js/someTesting.js"></script>
 	<script src="js/jquery.js"></script>
 	<script src="js/jqvalidate.js"></script>
 
