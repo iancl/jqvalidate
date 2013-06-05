@@ -7,9 +7,31 @@ Created to validate forms
 
 
 PENDING ADD VALIDATION TAKS FUNCTIONALITY
+--------------
+
+To use the plugin you need to add the following attributes to your input, selects or textarea nodes in the HTML:
+--------------
+	<input type="text" data-formvalidation="required" data-defaultvalue="enter text" value="enter text"/>
+
+	//or
+	<input type="text" data-formvalidation="number required"/>
+
+	//select
+	<select data-formvalidation="required" data-defaultvalue="default">
+		<option val="0">default</option>
+		<option val="1">val1</option>
+	</select>
+
+	//textarea
+	<textarea data-formvalidation="required"></textarea>
 
 
-Here is an example of how to use the plugin and it contains all the possible options
+As you can see data-formvalidation="required" enables the validation.
+data-defaultvalue="default" attribute can be added when the element will have a default value. So the validation can use that to validate
+--------------
+
+
+Here is an example of how to use the plugin and it contains all the possible options. 
 --------------
 
 	//storing element in jQuery wrapper
