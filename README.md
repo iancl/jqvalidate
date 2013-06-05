@@ -6,14 +6,23 @@ Created to validate forms
 --------------
 
 pending documentation
+
+
 PENDING OPTIIONS VALIDATION
+
+
 PENDING GLOBAL MESSAGE
+
+
 PENDING ADD VALIDATION TAKS FUNCTIONALITY
+
+
 PENDING UNIT TESTING
+
 
 *****
 
-**Copyright (c) 2011 Ian Calderon MIT LICENSED
+**Copyright (c) 2012 Ian Calderon MIT LICENSED
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
