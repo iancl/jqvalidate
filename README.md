@@ -6,7 +6,7 @@ Created to validate forms
 --------------
 
 
-PENDING ADD VALIDATION TAKS FUNCTIONALITY
+Pending example page
 --------------
 
 To use the plugin you need to add the following attributes to your input, selects or textarea nodes in the HTML:
