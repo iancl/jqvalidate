@@ -8,16 +8,58 @@ Created to validate forms
 pending documentation
 
 
-PENDING OPTIIONS VALIDATION
-
-
 PENDING GLOBAL MESSAGE
 
 
 PENDING ADD VALIDATION TAKS FUNCTIONALITY
 
 
-PENDING UNIT TESTING
+Here is an example of how to use the plugin and it contains all the possible options
+--------------
+
+
+var f = $('#form');
+
+
+	f.jqvalidate({
+
+		//REQUIRED
+		//SUBMIT BUTTON SELECTOR
+		submitBtnSelector: '#submit',
+
+		//OPTIONAL
+		//WILL BE EXECUTED WHEN THE FORM IS VALID
+		//you can add custom code here
+		onSuccess: function(){
+			console.log('onsuccessr', this);
+		},
+		//OPTIONAL
+		//WILL BE EXECUTED WHEN THE FORM IS NOT VALID
+		//this object will be an array with the form elements that failed validation
+		//you can add custom code here
+		onError: function(){
+			console.log('onError', this);
+		},
+		//OPTIONAL
+		//defaultValue 'invalid'
+		//INVALID CLASS THAT WILL BE ADDED TO THE INVALID INPUTS, SELECTS, TEXTAREAS
+		invalidCls: 'invalid',
+
+		//OPTIONAL
+		//default value 'span'
+		//TAG THAT WILL BE USED FOR THE ERROR LABEL
+		errorLabelTag: 'span',
+
+		//OPTIONAL
+		//default value is 'errorLabel'
+		//CLASS FOR THE ERROR LABEL ELEMENTS
+		errorLabelCls: 'errorLabel',
+
+		//OPTIONAL
+		//default valie is true
+		//CHANGE FLAG TO FALSE IF YOU DONT WANT TO PRINT ERRORS
+		shouldPrintErrors: true,
+	});
 
 
 *****
