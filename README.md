@@ -28,7 +28,6 @@ To use the plugin you need to add the following attributes to your input, select
 
 As you can see data-formvalidation="required" enables the validation.
 data-defaultvalue="default" attribute can be added when the element will have a default value. So the validation can use that to validate
---------------
 
 
 Here is an example of how to use the plugin and it contains all the possible options. 
