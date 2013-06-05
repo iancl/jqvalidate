@@ -121,12 +121,14 @@ To change, or add validation tasks you can access the availableTaskList which is
 			},
 			strError: 'please enter a number only'
 		},
-		name: 'fooName',
-		//currentVal and defaultVal cannot be changed
-		fn: function(currentVal, defaultVal){
-			//some code here
-		},
-		strError: 'foo error'
+		foo: {
+			name: 'fooName',
+			//currentVal and defaultVal cannot be changed
+			fn: function(currentVal, defaultVal){
+				//some code here
+			},
+			strError: 'foo error'
+		}
 	}
 
 	//after this you can add the task name: 'fooName' to the data-formValidation="" attribute of the element you may want to validate
